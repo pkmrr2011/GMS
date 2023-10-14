@@ -1,0 +1,28 @@
+{
+  "name": "bishwa",
+  "email": "bishwa@mailinator.co",
+  "profile_image":"bigint.png",
+  "password": "bishwa@123",
+  "address": {
+    "address1": "house no.1 , phagwara, bachelor house",
+    "address2": "no no",
+    "landmark": "near lpu",
+    "street": null,
+    "city": "phagwara",
+    "state": "Punjab",
+    "postalCode": "123456",
+    "country": "INDIA"
+  },
+  "aadhar_no": "1234567890",
+  "guardian_name":"me_only",
+  "guardian_number":"1234567890",
+  "age": 9,
+  "phone_no": "123434567575",
+  "alternate_phone_no": "3255646545",
+  "certificate": ["one.png" , "two.png"],
+  "last_job": null,
+  "blood_group": "Z+",
+  "married_status": true,
+  "languages": ["abba","zabba", "abba"],
+  "education": ["1st class"]
+}

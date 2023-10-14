@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  profile_image:{
+    type:String
+  },
   password: {
     type: String,
     required: true,
@@ -52,8 +55,53 @@ const userSchema = new mongoose.Schema({
   aadhar_no: {
     type: String,
   },
+  licence_no: {
+    type: String,
+    required:true,
+    unique:true,
+    default: function () {
+      const timestamp = new Date();
+      const num = (timestamp % 10000000 + 1000000).toString().substring(0, 7);
+      return 'LT' + num;
+    },
+    set: function (val) {
+      // This function will run when the field is set or updated.
+      // To ensure the licence_no is not updated after creation, return the existing value.
+      return this.isNew ? val : this.licence_no;
+    },
+  },
+  guardian_name:{
+    type:String
+  },
+  guardian_number:{
+    type: String
+  },
   age: {
     type: Number,
+  },
+  phone_no: {
+    type: String,
+  },
+  alternate_phone_no: {
+    type: String,
+  },
+  certificate: {
+    type: [String]
+  },
+  last_job: {
+    type: String
+  },
+  blood_group: {
+    type: String
+  },
+  married_status: {
+    type: Boolean
+  },
+  languages: {
+    type: [String]
+  },
+  education: {
+    type: [String]
   },
 });
 

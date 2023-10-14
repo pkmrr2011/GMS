@@ -1,0 +1,24 @@
+{
+  "site_name": "bishwa ka pg",
+  "image": "dustbin.jpg",
+  "any_prequation": ["tes","jgg"],
+  "servelance_type": "full",
+  "address": {
+    "address1": "jkhkjh",
+    "address2": "hgjyy",
+    "landmark": "pg",
+    "street": "np,5",
+    "city": "phagwara",
+    "state": "punjab",
+    "postalCode": "3242",
+    "nearest_police_station": "1023 km dur",
+    "nearest_fire_brigade": "not avilable",
+    "country": "pakistan"
+  },
+  "owner_detail": {
+    "name": "bishwa",
+    "phone_no": "y675657",
+    "alternate_phone_no": "7678685",
+    "email": "a@gmail.com"
+  }
+}

@@ -4,6 +4,7 @@ var ejs = require('ejs');
 var cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
+const multer = require("multer");
 var usersRouter = require('./routes/users');
 
 var adminRouter = require('./routes/admin');
@@ -39,6 +40,30 @@ app.get("/",(req,res)=>{
 app.use('/admin', adminRouter);
 
 app.use('/users', usersRouter);
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+   return cb(null, "./uploads/")
+  },
+  filename: (req, file, cb) => {
+    return cb(null, Date.now() + "-" + file.originalname)
+  },
+})
+
+const uploadStorage = multer({ storage: storage });
+app.post("/upload", 
+uploadStorage.single("media"),
+ (req, res)=>{
+  try {
+    return res.status(200).json({filename: req.file.filename });
+  } catch (error) {
+    return res.status(400).json({
+      error:true,
+      message:error.message
+    })
+  }
+ });
 
 app.get("*", (req,res)=>{
   return res.status(400).json({

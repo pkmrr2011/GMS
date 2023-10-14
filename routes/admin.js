@@ -10,4 +10,16 @@ router.get('/getUsers',requireAuth.authMiddleware , controller.getUsers );
 
 router.post('/addUser',requireAuth.authMiddleware ,validate.addUser , controller.addUser );
 
+router.patch('/updateUser',requireAuth.authMiddleware ,validate.user_id , controller.updateUser );
+
+router.delete('/deleteUser/:user_id',requireAuth.authMiddleware , controller.deleteUser );
+
+router.get('/getSites',requireAuth.authMiddleware , controller.getSites );
+
+router.post('/addSite',requireAuth.authMiddleware , controller.addSite );
+
+router.patch('/updateSite',requireAuth.authMiddleware ,validate.site_id , controller.updateSite );
+
+router.delete('/deleteSite/:site_id',requireAuth.authMiddleware , controller.deleteSite );
+
 module.exports = router;
