@@ -17,6 +17,7 @@
   "guardian_name":"me_only",
   "guardian_number":"1234567890",
   "age": 9,
+  "dob":"2000-01-01",
   "phone_no": "123434567575",
   "alternate_phone_no": "3255646545",
   "certificate": ["one.png" , "two.png"],

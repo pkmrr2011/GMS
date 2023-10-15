@@ -93,6 +93,36 @@ exports.login = [
     },
   ];
 
+  exports.job_id = [
+    check("job_id")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    (req, res, next) => {
+        this.validation(req, res, next);
+    },
+  ];
+
+  exports.addJob = [
+    check("user_id")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    check("site_id")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    (req, res, next) => {
+        this.validation(req, res, next);
+    },
+  ];
+
   exports.register = [
     check("email")
       .exists()

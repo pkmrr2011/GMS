@@ -65,8 +65,6 @@ const userSchema = new mongoose.Schema({
       return 'LT' + num;
     },
     set: function (val) {
-      // This function will run when the field is set or updated.
-      // To ensure the licence_no is not updated after creation, return the existing value.
       return this.isNew ? val : this.licence_no;
     },
   },
@@ -75,6 +73,9 @@ const userSchema = new mongoose.Schema({
   },
   guardian_number:{
     type: String
+  },
+  dob: {
+    type: Date,
   },
   age: {
     type: Number,

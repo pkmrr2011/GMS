@@ -11,7 +11,8 @@ const middleware = require("../middleware/auth");
 
 const Admin = require("../model/admin");
 const User = require("../model/user");
-const Site = require("../model/site")
+const Site = require("../model/site");
+const Job = require("../model/job");
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -249,6 +250,87 @@ exports.getSites = async (req, res) => {
         const sites = await Site.find(whereObj).limit(limit).skip(offset);
         return res.status(200).json({
             data: sites,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.addJob = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const job = await Job.create(data);
+        return res.status(200).json({
+            data: job,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.updateJob = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const query = { _id:new mongoose.Types.ObjectId(data.job_id) };
+        const update = { $set: data };
+        const job = await Job.updateOne(query, update);
+        return res.status(200).json({
+            data: job,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.deleteJob = async (req, res) => {
+    try {
+        const _id = req.params.job_id;
+
+         await Job.findByIdAndRemove(_id);
+        return res.status(200).json({
+            data: "Deleted",
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+
+exports.getJobs = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const whereObj ={}
+
+        if(data.job_id){
+            whereObj._id =new mongoose.Types.ObjectId(data.job_id) 
+        }
+
+        const limit = data.limit ? parseInt(data.limit) : Number.MAX_SAFE_INTEGER;
+        const offset = data.offset ? parseInt(data.offset) : 0;
+
+        const jobs = await Job.find(whereObj).limit(limit).skip(offset);
+        return res.status(200).json({
+            data: jobs,
         });
 
     } catch (error) {

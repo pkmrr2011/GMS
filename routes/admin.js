@@ -22,4 +22,12 @@ router.patch('/updateSite',requireAuth.authMiddleware ,validate.site_id , contro
 
 router.delete('/deleteSite/:site_id',requireAuth.authMiddleware , controller.deleteSite );
 
+router.get('/getJobs',requireAuth.authMiddleware , controller.getJobs );
+
+router.post('/addJob',requireAuth.authMiddleware ,validate.addJob, controller.addJob );
+
+router.patch('/updateJob',requireAuth.authMiddleware ,validate.job_id , controller.updateJob );
+
+router.delete('/deleteJob/:job_id',requireAuth.authMiddleware , controller.deleteJob );
+
 module.exports = router;
