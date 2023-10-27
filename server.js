@@ -39,7 +39,7 @@ app.get("/",(req,res)=>{
 
 app.use('/admin', adminRouter);
 
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 
 
 const storage = multer.diskStorage({

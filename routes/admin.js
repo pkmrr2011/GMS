@@ -30,4 +30,12 @@ router.patch('/updateJob',requireAuth.authMiddleware ,validate.job_id , controll
 
 router.delete('/deleteJob/:job_id',requireAuth.authMiddleware , controller.deleteJob );
 
+router.get('/getAnnouncements',requireAuth.authMiddleware , controller.getAnnouncements );
+
+router.post('/addAnnouncement',requireAuth.authMiddleware , controller.addAnnouncement );
+
+router.patch('/updateAnnouncement',requireAuth.authMiddleware  , controller.updateAnnouncement );
+
+router.delete('/deleteAnnouncement/:announcement_id',requireAuth.authMiddleware , controller.deleteAnnouncement );
+
 module.exports = router;

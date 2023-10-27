@@ -13,6 +13,7 @@ const Admin = require("../model/admin");
 const User = require("../model/user");
 const Site = require("../model/site");
 const Job = require("../model/job");
+const Announcement = require("../model/announcement");
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -192,23 +193,55 @@ exports.addSite = async (req, res) => {
     }
 };
 
+// exports.updateSite = async (req, res) => {
+//     try {
+//         const data = {
+//             ...req.query,
+//             ...req.body
+//         }
+//         if (typeof (data.any_prequation) == "string") {
+//             data.any_prequation = JSON.parse(data.any_prequation)
+//         }
+
+//         const query = { _id:new mongoose.Types.ObjectId(data.site_id) };
+//         const update = { $set: data };
+//         const site = await Site.updateOne(query, update);
+//         return res.status(200).json({
+//             data: site,
+//         });
+
+//     } catch (error) {
+//         console.error(error.message);
+//         return res.status(400).json({ error: error.message });
+//     }
+// };
+
 exports.updateSite = async (req, res) => {
     try {
-        const data = {
-            ...req.query,
-            ...req.body
-        }
-        if (typeof (data.any_prequation) == "string") {
-            data.any_prequation = JSON.parse(data.any_prequation)
+        let data = { ...req.body };
+        
+        if (typeof data.any_prequation === "string") {
+            data.any_prequation = JSON.parse(data.any_prequation);
         }
 
-        const query = { _id:new mongoose.Types.ObjectId(data.site_id) };
+        if (!data.site_id) {
+            return res.status(400).json({ error: 'site_id is required.' });
+        }
+
+        const query = { _id: new mongoose.Types.ObjectId(data.site_id) };
+        delete data.site_id; // Remove site_id from data as it's not part of the update data
+
         const update = { $set: data };
         const site = await Site.updateOne(query, update);
+
+        if (site.nModified === 0) {
+            return res.status(404).json({ error: 'No site found to update.' });
+        }
+
         return res.status(200).json({
+            success: true,
             data: site,
         });
-
     } catch (error) {
         console.error(error.message);
         return res.status(400).json({ error: error.message });
@@ -331,6 +364,97 @@ exports.getJobs = async (req, res) => {
         const jobs = await Job.find(whereObj).limit(limit).skip(offset);
         return res.status(200).json({
             data: jobs,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+
+exports.addAnnouncement = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const Announcement = await Announcement.create(data);
+        return res.status(200).json({
+            data: Announcement,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.updateAnnouncement = async (req, res) => {
+    try {
+        let data = { ...req.body };
+        
+
+        if (!data.announcement_id) {
+            return res.status(400).json({ error: 'announcement_id is required.' });
+        }
+
+        const query = { _id: new mongoose.Types.ObjectId(data.announcement_id) };
+        delete data.announcement_id; // Remove site_id from data as it's not part of the update data
+
+        const update = { $set: data };
+        const announcement_id = await announcement_id.updateOne(query, update);
+
+        if (announcement_id.nModified === 0) {
+            return res.status(404).json({ error: 'No announcement_id found to update.' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: announcement_id,
+        });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.deleteAnnouncement = async (req, res) => {
+    try {
+        const _id = req.params.announcement_id;
+
+         await Announcement.findByIdAndRemove(_id);
+        return res.status(200).json({
+            data: "Deleted",
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+
+exports.getAnnouncements = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const whereObj ={}
+
+        if(data.announcement_id){
+            whereObj._id =new mongoose.Types.ObjectId(data.announcement_id) 
+        }
+
+        const limit = data.limit ? parseInt(data.limit) : Number.MAX_SAFE_INTEGER;
+        const offset = data.offset ? parseInt(data.offset) : 0;
+
+        const Announcements = await Announcement.find(whereObj).limit(limit).skip(offset);
+        return res.status(200).json({
+            data: Announcements,
         });
 
     } catch (error) {

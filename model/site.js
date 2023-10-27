@@ -14,7 +14,7 @@ const siteSchema = new mongoose.Schema({
   },
   servelance_type: {
     type: String,
-    enum:[ "full" , "main", "gate", "outer"]
+    // enum:[ "full" , "main", "gate", "outer"]
   },
   address: {
     address1: {

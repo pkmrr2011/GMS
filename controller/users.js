@@ -8,7 +8,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 
 const User = require("../model/user");
+const UserAccess = require("../model/user_access");
 const middleware = require("../middleware/auth")
+const utils = require("../middleware/utils")
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -18,6 +20,29 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const saveUserAccess = async (req, user) => {
+    return new Promise((resolve, reject) => {
+      const data = {
+        email: user.email,
+        ip: utils.getIP(req),
+        browser: utils.getBrowserInfo(req),
+        country: utils.getCountry(req),
+      };
+      UserAccess.create(data)
+        .then((item) => {
+          resolve({
+            error:false,
+            message:"added"
+          });
+        })
+        .catch((err) => {
+          reject({
+            error:true,
+            message:err.message
+          });
+        });
+    });
+  };
 
 exports.register = async (req, res) => {
     try {
@@ -60,17 +85,14 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const data = {
-            ...req.query,
-            ...req.body
-        }
+        const data = req.body
 
         const userExist = await User.findOne({
-            user_name: data.user_name
+            email: data.email
         });
 
         if(!userExist){
-            return res.status(400).json({ code:400 ,error: 'Wrong User Name' });
+            return res.status(400).json({ code:400 ,error: 'User doesnot exist' });
         }
 
         const isPasswordValid = await bcrypt.compare(data.password, userExist.password);
@@ -78,14 +100,21 @@ exports.login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(400).json({ code:400 ,error: 'Wrong Password' });
             }
-
-            console.log("0----",userExist);
         const payload = {
             _id:userExist._id,
             email:userExist.email,
             full_name: userExist.full_name
         };
         const token = jwt.sign(payload, 'project');
+
+        const user_acccess = await saveUserAccess(req ,userExist )
+
+        console.log("---->>>",user_acccess);
+
+        if(user_acccess?.error){
+            return res.status(400).json({ code:400 ,error: 'something went wrong' }); 
+        }
+
         res.status(200).json({
             data: userExist,
             token
