@@ -104,6 +104,11 @@ const userSchema = new mongoose.Schema({
   education: {
     type: [String]
   },
+  status: {
+    type: String,
+    enum:[ "active" , "inactive"],
+    default:"inactive"
+  },
 });
 
 userSchema.methods.verifyPassword = function (plainPassword) {

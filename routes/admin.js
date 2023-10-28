@@ -18,7 +18,10 @@ router.get('/getSites',requireAuth.authMiddleware , controller.getSites );
 
 router.post('/addSite',requireAuth.authMiddleware , controller.addSite );
 
-router.patch('/updateSite',requireAuth.authMiddleware ,validate.site_id , controller.updateSite );
+router.patch('/updateSite/:site_id', (req, res, next) => {
+    console.log("Hit the updateSite route");
+    next();
+  }, requireAuth.authMiddleware ,validate.site_id , controller.updateSite);
 
 router.delete('/deleteSite/:site_id',requireAuth.authMiddleware , controller.deleteSite );
 
@@ -37,5 +40,7 @@ router.post('/addAnnouncement',requireAuth.authMiddleware , controller.addAnnoun
 router.patch('/updateAnnouncement',requireAuth.authMiddleware  , controller.updateAnnouncement );
 
 router.delete('/deleteAnnouncement/:announcement_id',requireAuth.authMiddleware , controller.deleteAnnouncement );
+
+router.get('/getInactiveGuard',requireAuth.authMiddleware , controller.getInactiveGuard );
 
 module.exports = router;

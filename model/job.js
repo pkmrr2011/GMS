@@ -36,7 +36,6 @@ const JobSchema = new mongoose.Schema({
   },
   shift_type: {
     type: String,
-    enum:[ "day" , "night"]
   },
 });
 

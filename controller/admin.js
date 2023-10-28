@@ -248,6 +248,7 @@ exports.updateSite = async (req, res) => {
     }
 };
 
+
 exports.deleteSite = async (req, res) => {
     try {
         const _id = req.params.site_id;
@@ -297,6 +298,12 @@ exports.addJob = async (req, res) => {
             ...req.query,
             ...req.body
         }
+
+        const query = { _id:new mongoose.Types.ObjectId(data.user_id) };
+        const update = { $set: {
+            status:"active"
+        } };
+         await User.updateOne(query, update); 
 
         const job = await Job.create(data);
         return res.status(200).json({
@@ -462,3 +469,30 @@ exports.getAnnouncements = async (req, res) => {
         return res.status(400).json({ error: error.message });
     }
 };
+
+
+exports.getInactiveGuard = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const whereObj ={
+            status:"inactive"
+        }
+
+        const limit = data.limit ? parseInt(data.limit) : Number.MAX_SAFE_INTEGER;
+        const offset = data.offset ? parseInt(data.offset) : 0;
+
+        const users = await User.find(whereObj).limit(limit).skip(offset);
+        return res.status(200).json({
+            data: users,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
