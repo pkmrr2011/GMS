@@ -21,4 +21,14 @@ router.post('/sendOtp',validate.sendOtp, controller.sendOtp );
 
 router.post('/forgetPassword',validate.forgetPassword, controller.forgetPassword );
 
+router.get('/myJobList',middleware.authMiddleware,  controller.myJobList );
+
+router.post('/startDuty',middleware.authMiddleware,validate.startDuty,  controller.startDuty );
+
+router.get('/todayDuty',middleware.authMiddleware,  controller.todayDuty );
+
+router.get('/endDuty',middleware.authMiddleware,  controller.endDuty );
+
+router.post('/addIncident',middleware.authMiddleware,validate.addIncident,  controller.addIncident );
+
 module.exports = router;

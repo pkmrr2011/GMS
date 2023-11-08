@@ -189,3 +189,39 @@ exports.login = [
         this.validation(req, res, next);
     },
   ];
+
+  exports.startDuty = [
+    check("job_id")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    check("site_id")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    (req, res, next) => {
+        this.validation(req, res, next);
+    },
+  ];
+
+  exports.addIncident = [
+    check("incident_images")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    check("incident_comment")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    (req, res, next) => {
+        this.validation(req, res, next);
+    },
+  ];

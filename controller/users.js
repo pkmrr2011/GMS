@@ -9,6 +9,9 @@ const bcrypt = require('bcrypt')
 
 const User = require("../model/user");
 const UserAccess = require("../model/user_access");
+const Job = require("../model/job");
+const Duty = require("../model/daily_duty");
+
 const middleware = require("../middleware/auth")
 const utils = require("../middleware/utils")
 
@@ -105,7 +108,7 @@ exports.login = async (req, res) => {
             email:userExist.email,
             full_name: userExist.full_name
         };
-        const token = jwt.sign(payload, 'project');
+        const token = jwt.sign(payload, 'gms@123!gms');
 
         const user_acccess = await saveUserAccess(req ,userExist )
 
@@ -272,6 +275,177 @@ exports.forgetPassword = async (req, res) => {
         res.status(200).json({
             data:user,
         })
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+
+exports.myJobList = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const job_list = await Job.find({
+            user_id: req.user._id
+        }).populate('site_id');
+
+
+        if(job_list.length == 0){
+            return res.status(400).json({ code:400 ,error: 'No Job For You' });
+        }
+
+        res.status(200).json({
+            data:job_list,
+        })
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.startDuty = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        data.user_id = req.user._id;
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        data.checkin_time = `${hours}:${minutes}`;
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); 
+        const today_duty = await Duty.findOne({
+            date: {
+              $gte: startOfToday,
+              $lt: endOfToday
+            },
+            user_id:req.user._id
+          })
+
+          if(today_duty){
+            return res.status(400).json({ code:400 ,error: 'Already stated a duty' });
+          }
+        const duty = await Duty.create(data);
+        return res.status(200).json({
+            data: duty,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.todayDuty = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+        const today = new Date();
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()); 
+        const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); 
+        
+        const duty = await Duty.findOne({
+            date: {
+              $gte: startOfToday,
+              $lt: endOfToday
+            },
+            user_id:req.user._id
+          }).populate("site_id job_id")
+        return res.status(200).json({
+            data: duty,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.endDuty = async (req, res) => {
+    try {
+
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const checkout_time = `${hours}:${minutes}`;
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); 
+        const today_duty = await Duty.findOne({
+            date: {
+              $gte: startOfToday,
+              $lt: endOfToday
+            },
+            user_id:req.user._id
+          })
+
+          if(!today_duty){
+            return res.status(400).json({ code:400 ,error: 'You did not checking today' });
+          }
+         await Duty.findByIdAndUpdate(today_duty._id, {
+            $set: {
+                checkout_time: checkout_time
+            }
+        });
+        return res.status(200).json({
+            data: "check out",
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.addIncident = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        if(typeof(data.incident_images)=="string"){
+            data.incident_images = JSON.parse(data.incident_images)
+        }
+
+        data.is_incident = false;
+
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        data.incident_time = `${hours}:${minutes}`;
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); 
+        const today_duty = await Duty.findOne({
+            date: {
+              $gte: startOfToday,
+              $lt: endOfToday
+            },
+            user_id:req.user._id
+          })
+
+          if(!today_duty){
+            return res.status(400).json({ code:400 ,error: 'You did not checking today' });
+          }
+         await Duty.findByIdAndUpdate(today_duty._id, {
+            $set: data
+        });
+        return res.status(200).json({
+            data: "Added",
+        });
 
     } catch (error) {
         console.error(error.message);
