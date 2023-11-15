@@ -27,7 +27,7 @@ router.post('/startDuty',middleware.authMiddleware,validate.startDuty,  controll
 
 router.get('/todayDuty',middleware.authMiddleware,  controller.todayDuty );
 
-router.get('/endDuty',middleware.authMiddleware,  controller.endDuty );
+router.post('/endDuty',middleware.authMiddleware,  controller.endDuty );
 
 router.post('/addIncident',middleware.authMiddleware,validate.addIncident,  controller.addIncident );
 

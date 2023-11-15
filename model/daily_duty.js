@@ -39,6 +39,12 @@ const DutySchema = new mongoose.Schema({
   incident_time: {
     type: String,
   },
+  daily_report_images: {
+    type: [String],
+  },
+  daily_report_comment: {
+    type: String,
+  },
   date: {
     type: Date,
     default: Date.now

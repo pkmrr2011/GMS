@@ -225,3 +225,21 @@ exports.login = [
         this.validation(req, res, next);
     },
   ];
+
+  exports.endDuty = [
+    check("daily_report_images")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    check("daily_report_comment")
+      .exists()
+      .withMessage("MISSING")
+      .not()
+      .isEmpty()
+      .withMessage("IS_EMPTY"),
+    (req, res, next) => {
+        this.validation(req, res, next);
+    },
+  ];

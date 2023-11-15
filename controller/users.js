@@ -396,7 +396,9 @@ exports.endDuty = async (req, res) => {
           }
          await Duty.findByIdAndUpdate(today_duty._id, {
             $set: {
-                checkout_time: checkout_time
+                checkout_time: checkout_time,
+                daily_report_images: req.body.daily_report_images,
+                daily_report_comment: req.body.daily_report_comment,
             }
         });
         return res.status(200).json({
