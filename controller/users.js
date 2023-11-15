@@ -376,6 +376,10 @@ exports.todayDuty = async (req, res) => {
 exports.endDuty = async (req, res) => {
     try {
 
+        if(typeof(req.body.daily_report_images) == "string"){
+            req.body.daily_report_images = JSON.parse(req.body.daily_report_images)
+        }
+
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');
         const minutes = now.getMinutes().toString().padStart(2, '0');
