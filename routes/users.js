@@ -31,4 +31,6 @@ router.post('/endDuty',middleware.authMiddleware,  controller.endDuty );
 
 router.post('/addIncident',middleware.authMiddleware,validate.addIncident,  controller.addIncident );
 
+router.post('/addDailyReport',middleware.authMiddleware,validate.addDailyReport,  controller.addDailyReport );
+
 module.exports = router;

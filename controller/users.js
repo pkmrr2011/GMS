@@ -398,6 +398,10 @@ exports.endDuty = async (req, res) => {
           if(!today_duty){
             return res.status(400).json({ code:400 ,error: 'You did not checking today' });
           }
+
+          if(!today_duty.daily_report_comment){
+            return res.status(400).json({ code:400 ,error: 'You didnot upload daily report' });
+          }
          await Duty.findByIdAndUpdate(today_duty._id, {
             $set: {
                 checkout_time: checkout_time,
@@ -426,7 +430,7 @@ exports.addIncident = async (req, res) => {
             data.incident_images = JSON.parse(data.incident_images)
         }
 
-        data.is_incident = false;
+        data.is_incident = true;
 
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');
@@ -442,9 +446,56 @@ exports.addIncident = async (req, res) => {
             },
             user_id:req.user._id
           })
-
+          console.log("today_duty---",today_duty);
           if(!today_duty){
             return res.status(400).json({ code:400 ,error: 'You did not checking today' });
+          }
+         await Duty.findByIdAndUpdate(today_duty._id, {
+            $set: data
+        });
+        return res.status(200).json({
+            data: "Added",
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.addDailyReport = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        if(typeof(data.daily_report_images)=="string"){
+            data.daily_report_images = JSON.parse(data.daily_report_images)
+        }
+
+        const now = new Date();
+        // const hours = now.getHours().toString().padStart(2, '0');
+        // const minutes = now.getMinutes().toString().padStart(2, '0');
+        // data.incident_time = `${hours}:${minutes}`;
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); 
+        const today_duty = await Duty.findOne({
+            date: {
+              $gte: startOfToday,
+              $lt: endOfToday
+            },
+            user_id:req.user._id
+          })
+          console.log("today_duty---",today_duty);
+          if(!today_duty){
+            return res.status(400).json({ code:400 ,error: 'You did not checking today' });
+          }
+
+          if(today_duty.daily_report_comment){
+            return res.status(400).json({ code:400 ,error: 'You already submitted the daily report' });
+
           }
          await Duty.findByIdAndUpdate(today_duty._id, {
             $set: data
