@@ -15,6 +15,8 @@ const Duty = require("../model/daily_duty");
 const middleware = require("../middleware/auth")
 const utils = require("../middleware/utils")
 
+const emailer = require("../middleware/emailer")
+
 var app = express();
 app.set('view engine', 'ejs');
 
@@ -445,7 +447,7 @@ exports.addIncident = async (req, res) => {
               $lt: endOfToday
             },
             user_id:req.user._id
-          })
+          }).populate("site_id user_id")
           console.log("today_duty---",today_duty);
           if(!today_duty){
             return res.status(400).json({ code:400 ,error: 'You did not checking today' });
@@ -453,6 +455,20 @@ exports.addIncident = async (req, res) => {
          await Duty.findByIdAndUpdate(today_duty._id, {
             $set: data
         });
+
+        emailer.sendEmail(
+            today_duty.site_id.owner_detail.email,
+            "Guard Incident Report",
+            "/incident_report.ejs",
+            {
+                guardName: today_duty.user_id.name,
+                siteName: today_duty.site_id.site_name,
+                ownerName: today_duty.site_id.owner_detail.name,
+                comment: data.incident_comment,
+                images: data.incident_images,
+                guardContact: today_duty.user_id.email
+            }
+          );
         return res.status(200).json({
             data: "Added",
         });
@@ -487,7 +503,7 @@ exports.addDailyReport = async (req, res) => {
               $lt: endOfToday
             },
             user_id:req.user._id
-          })
+          }).populate("site_id user_id")
           console.log("today_duty---",today_duty);
           if(!today_duty){
             return res.status(400).json({ code:400 ,error: 'You did not checking today' });
@@ -500,9 +516,44 @@ exports.addDailyReport = async (req, res) => {
          await Duty.findByIdAndUpdate(today_duty._id, {
             $set: data
         });
+
+        emailer.sendEmail(
+            today_duty.site_id.owner_detail.email,
+            "Guard Daily Report",
+            "/daily_report.ejs",
+            {
+                guardName: today_duty.user_id.name,
+                siteName: today_duty.site_id.site_name,
+            }
+          );
         return res.status(200).json({
             data: "Added",
         });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+exports.sendEmail = async (req, res) => {
+    try {
+        emailer.sendEmail(
+            "pk@mailinator.com",
+            "Welcome message",
+            "/incident_report.ejs",
+            {
+                guardName: "Prince",
+                siteName: "Taj Hotel",
+                images: [
+                    "1700780873451-prince.jpg"
+                ],
+                comment: "hello"
+            }
+          );
+        return res.status(200).json({
+            data:"done",
+        })
 
     } catch (error) {
         console.error(error.message);

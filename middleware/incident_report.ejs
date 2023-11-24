@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Incident Report for Guard <%= content.guardName %></h2>
+    <p>Dear <%= content.ownerName %>,</p>
+    <p>I am writing to inform you of an incident that I observed while on duty as Guard <%= content.guardName %> at site <%= content.siteName %></p>
+    <h3>Incident Details:</h3>
+    <p><%= content.comment %></p>
+
+    <h3>Incident Images:</h3>
+    <ul>
+        <% for (let i = 0; i < content.images.length; i++) { %>
+            <li><img src="../uploads/"<%= content.images[i] %>" alt="Incident Image" style="max-width: 100%;"></li>
+        <% } %>
+    </ul>
+    <p>If you need more information or if there are further steps to be taken, please contact me at <%= content.guardContact %>.</p>
+    <br>
+    <p>Best regards,</p>
+    <p>The Guard Management Team</p>
+</body>
+</html>

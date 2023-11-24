@@ -33,4 +33,7 @@ router.post('/addIncident',middleware.authMiddleware,validate.addIncident,  cont
 
 router.post('/addDailyReport',middleware.authMiddleware,validate.addDailyReport,  controller.addDailyReport );
 
+router.get('/sendEmail', controller.sendEmail );
+
+
 module.exports = router;
