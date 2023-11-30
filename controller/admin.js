@@ -14,6 +14,7 @@ const User = require("../model/user");
 const Site = require("../model/site");
 const Job = require("../model/job");
 const Announcement = require("../model/announcement");
+const Duty = require('../model/daily_duty');
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -496,3 +497,29 @@ exports.getInactiveGuard = async (req, res) => {
     }
 };
 
+exports.getDailyReport = async (req, res) => {
+    try {
+        const data = {
+            ...req.query,
+            ...req.body
+        }
+
+        const whereObj ={
+            daily_report_comment:{
+                $ne: null
+            }
+        }
+
+        const limit = data.limit ? parseInt(data.limit) : Number.MAX_SAFE_INTEGER;
+        const offset = data.offset ? parseInt(data.offset) : 0;
+
+        const duties = await Duty.find(whereObj).limit(limit).skip(offset).populate("site_id user_id")
+        return res.status(200).json({
+            data: duties,
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(400).json({ error: error.message });
+    }
+};

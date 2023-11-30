@@ -43,4 +43,6 @@ router.delete('/deleteAnnouncement/:announcement_id',requireAuth.authMiddleware 
 
 router.get('/getInactiveGuard',requireAuth.authMiddleware , controller.getInactiveGuard );
 
+router.get('/getDailyReport', controller.getDailyReport );
+
 module.exports = router;
